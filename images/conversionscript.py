@@ -139,7 +139,6 @@ def demonstrate_pdf_conversion():
             if choice.lower() in ['q', 'quit', 'exit']:
                 print("Demo cancelled.")
                 return
-            
             choice_num = int(choice)
             if choice_num == 1:
                 quality = 'high'
