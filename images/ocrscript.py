@@ -301,6 +301,9 @@ Examples:
     # Get available images
     processed_images, original_images = get_available_images()
     
+    # Combine both lists for single image selection if needed
+    all_images = original_images if original_images else processed_images
+    
     if not processed_images and not original_images:
         print("❌ No images found in processed-imgs/ or images/ directories")
         print("Please run the PDF conversion demo first or add images to the images/ directory")
@@ -326,7 +329,7 @@ Examples:
             print(f"  ... and {len(original_images) - 5} more")
     
     print("\nProcessing Options:")
-    print("  1. Process a single image from images/ directory")
+    print("  1. Process a single image from images/ or processed-imgs/ directory")
     if processed_images:
         print("  2. Process all images in processed-imgs/ directory (batch)")
     print("  q. Quit")
@@ -340,27 +343,27 @@ Examples:
                 print("Demo cancelled.")
                 return 0
             elif choice == '1':
-                # Process single image from images/ directory
-                if not original_images:
-                    print("❌ No images found in images/ directory")
+                # Process single image from images/ or processed-imgs/ directory
+                if not all_images:
+                    print("❌ No images found in images/ or processed-imgs/ directory")
                     continue
                 
-                print(f"\nAvailable images in images/ directory:")
-                for i, img_path in enumerate(original_images, 1):
+                print(f"\nAvailable images:")
+                for i, img_path in enumerate(all_images, 1):
                     print(f"  {i}. {img_path.name}")
                 
                 while True:
                     try:
-                        img_choice = input(f"\nWhich image to process? (1-{len(original_images)}): ").strip()
+                        img_choice = input(f"\nWhich image to process? (1-{len(all_images)}): ").strip()
                         if img_choice.lower() in ['q', 'quit', 'exit']:
                             return 0
                         
                         img_num = int(img_choice)
-                        if 1 <= img_num <= len(original_images):
-                            selected_image = original_images[img_num - 1]
+                        if 1 <= img_num <= len(all_images):
+                            selected_image = all_images[img_num - 1]
                             break
                         else:
-                            print(f"Please enter a number between 1 and {len(original_images)}")
+                            print(f"Please enter a number between 1 and {len(all_images)}")
                     except ValueError:
                         print("Please enter a valid number")
                 
