@@ -2,8 +2,9 @@ import os
 import sys
 from pathlib import Path
 import argparse
+from pdf2image import convert_from_path
 
-required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python']
+required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python', 'pdf2image']
 missing = []
 
 for pkg in required_packages:
@@ -22,19 +23,27 @@ if missing:
     import subprocess 
     subprocess.check_call([sys.executable, "-m", "pip", "install"] + missing)
 
-pdf_dir = Path('/8510/ocrtesseract/ocrai/pdf')
+pdf_dir = Path('/Users/ceciliabarnard/Desktop//8510/ocrtesseract/ocrai/pdf')
 
-for pdf in Path.glob(pdf_dir, '*.pdf'):
-    from pdf2image import convert_from_path, convert_from_bytes 
-    from pdf2image.exceptions import ( 
-    PDFInfoNotInstalledError, 
-    PDFPageCountError, 
-    PDFSyntaxError 
-) 
-print('pdf')
-   
-output_dir = Path('/8510/ocrtesseract/ocrai/pdf/converted_images')
+output_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/converted_images')
 output_dir.mkdir(exist_ok=True)
-images_from_path = convert_from_path(pdf_path, output_folder=output_dir, fmt='png')
+
+for pdf_path in pdf_dir.glob('*.pdf'):
+    try:
+        print(f'Processing: {pdf_path.name}')
+        images = convert_from_path(pdf_path, output_folder=output_dir, fmt='png')
+        print(f'  Converted {len(images)} pages from {pdf_path.name}')
+    except Exception as e:
+        print(f'  ❌ Error processing {pdf_path.name}: {e}')
+
+quality_settings = {
+            'high': {'dpi': 300, 'format': 'PNG'},
+            'medium': {'dpi': 200, 'format': 'PNG'},
+            'low': {'dpi': 150, 'format': 'JPEG'}
+        }
+settings = quality_settings.get('high', quality_settings['high'])
+
+
+
 
   
