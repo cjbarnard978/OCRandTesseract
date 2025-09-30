@@ -22,9 +22,9 @@ if missing:
     import subprocess 
     subprocess.check_call([sys.executable, "-m", "pip", "install"] + missing)
 
-Path = Path('/8510/ocrtesseract/ocrai/pdf/')
+pdf_dir = Path('/8510/ocrtesseract/ocrai/pdf')
 
-for pdf in Path.glob('*.pdf'):
+for pdf in Path.glob(pdf_dir, '*.pdf'):
     from pdf2image import convert_from_path, convert_from_bytes 
     from pdf2image.exceptions import ( 
     PDFInfoNotInstalledError, 
@@ -32,7 +32,7 @@ for pdf in Path.glob('*.pdf'):
     PDFSyntaxError 
 ) 
 print('pdf')
-    
+   
 output_dir = Path('/8510/ocrtesseract/ocrai/pdf/converted_images')
 output_dir.mkdir(exist_ok=True)
 images_from_path = convert_from_path(pdf_path, output_folder=output_dir, fmt='png')
