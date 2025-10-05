@@ -1,9 +1,6 @@
-import os
-import sys
-from pathlib import Path
-import argparse
-from pdf2image import convert_from_path
+# The content of the file after line 124 is removed
 
+<<<<<<< HEAD
 required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python', 'pdf2image']
 missing = []
 
@@ -125,3 +122,7 @@ corrected_file = corrections_dir / filename
 with open(corrected_file, 'w', encoding='utf-8') as f:
     f.write(corrected_text)
 print(f'Corrected text saved to {corrected_file}')
+=======
+def some_function():
+    pass
+>>>>>>> 8d367140b5bb1eb210edd347268d41bcd170f76b
