@@ -58,21 +58,9 @@ for img_path in input_dir.glob('*.png'):
         print(f'Converted {img_path.name} to grayscale.')
 
 def ocr_conversion(image_path, lang='lat'):
-    print('running ocr')
-    text, data = run_ocr_psm3(image_path, lang=lang)
-    
-    if text and data:
-        confidence = analyze_text_confidence(data)
-        cleaned_text = clean_text(text) 
-        result = {
-            'text': cleaned_text,
-            'confidence': confidence,
-            'word count': word_count
-        }
-        print(print(f"Words extracted: {word_count}"))
-     else 
-        print("FAILED") 
-        return {}
+    # Placeholder: function not implemented
+    print('ocr_conversion is not implemented. Please use the main loop for OCR processing.')
+    return {}
 def process_all_images(input_dir, lang='lat'): 
     total_words = 0
     successful_images = 0
@@ -126,3 +114,14 @@ with open('low_conf_file.txt', 'r', encoding='utf-8') as f:
     ocr_text = f.read()
 corrected_text = correct_text_with_openai(ocr_text)
 print(corrected_text)
+
+corrected_text = "This is the corrected text."
+corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai_corrections')
+corrections_dir.mkdir(exist_ok=True)
+
+
+filename = 'example_openai_corrected.txt'
+corrected_file = corrections_dir / filename
+with open(corrected_file, 'w', encoding='utf-8') as f:
+    f.write(corrected_text)
+print(f'Corrected text saved to {corrected_file}')
