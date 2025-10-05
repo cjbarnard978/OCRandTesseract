@@ -97,8 +97,7 @@ for img_path in input_dir.glob('*.png'):
         print(f'❌ Error processing {img_path.name}: {e}')
 
 import openai 
-from openai import OpenAI 
-openai.api_key = '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'
+openai.api_key = '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'
 def correct_text_with_openai(text): 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
