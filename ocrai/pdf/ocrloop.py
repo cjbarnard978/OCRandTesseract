@@ -1,6 +1,6 @@
 # The content of the file after line 124 is removed
 
-<<<<<<< HEAD
+## Cleaned: removed git conflict marker
 required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python', 'pdf2image']
 missing = []
 
@@ -75,11 +75,11 @@ for img_path in input_dir.glob('*.png'):
         print(f'Processed {img_path.name}:')
         print(text[:200])
         print('-' * 40)
-        # Calculate mean confidence
+
         data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
         confidences = [int(conf) for conf in data['conf'] if conf.isdigit() and int(conf) > 0]
         confidence = sum(confidences) / len(confidences) if confidences else 0
-        # Save result to file
+
         result_file = results_dir / (img_path.stem + '.txt')
         with open(result_file, 'w', encoding='utf-8') as f:
             f.write(text)
@@ -95,7 +95,7 @@ for img_path in input_dir.glob('*.png'):
 
 import openai 
 from openai import OpenAI 
-openai.api_key = 'Your-OpenAI-Key-Here'
+openai.api_key = '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'
 def correct_text_with_openai(text): 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -117,12 +117,8 @@ corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pd
 corrections_dir.mkdir(exist_ok=True)
 
 
-filename = 'example_openai_corrected.txt'
+filename = 'openai_corrected.txt'
 corrected_file = corrections_dir / filename
 with open(corrected_file, 'w', encoding='utf-8') as f:
     f.write(corrected_text)
 print(f'Corrected text saved to {corrected_file}')
-=======
-def some_function():
-    pass
->>>>>>> 8d367140b5bb1eb210edd347268d41bcd170f76b
