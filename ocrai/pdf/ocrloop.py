@@ -99,12 +99,23 @@ for img_path in input_dir.glob('*.png'):
         with open(result_file, 'w', encoding='utf-8') as f:
             f.write(text)
         print(f'Saved OCR result to {result_file}')
-        # If confidence < 65, also save to low confidence file
-        if confidence < 65:
-            low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
-            with open(low_conf_file, 'w', encoding='utf-8') as f:
-                f.write(text)
-            print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
+   
+                if confidence < 65:
+                    low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
+                    with open(low_conf_file, 'w', encoding='utf-8') as f:
+                        f.write(text)
+                    print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
+
+                    # Send to OpenAI for correction
+                    import openai
+                    openai.api_key = 'YOUR_OPENAI_API_KEY'  # Replace with your actual key
+                    corrected_text = correct_text_with_openai(text)
+                    corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai corrections')
+                    corrections_dir.mkdir(exist_ok=True)
+                    corrected_file = corrections_dir / (img_path.stem + '_openai_corrected.txt')
+                    with open(corrected_file, 'w', encoding='utf-8') as f:
+                        f.write(corrected_text)
+                    print(f'Corrected text saved to {corrected_file}')
     except Exception as e:
         print(f'❌ Error processing {img_path.name}: {e}')
 
@@ -112,5 +123,17 @@ import openai
 from openai import OpenAI 
 openai.api_key = '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' 
 def correct_text_with_openai(text): 
-    response = openai.
-'
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are an expert at correcting OCR errors in historical texts."},
+            {"role": "user", "content": f"Please correct the following OCR text:\n{text}"}
+        ]
+    )
+    return response['choices'][0]['message']['content']
+
+
+with open('low_conf_file.txt', 'r', encoding='utf-8') as f:
+    ocr_text = f.read()
+corrected_text = correct_text_with_openai(ocr_text)
+print(corrected_text)
