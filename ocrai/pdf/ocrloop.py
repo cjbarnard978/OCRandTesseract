@@ -1,6 +1,9 @@
-# The content of the file after line 124 is removed
+import sys
+from pathlib import Path
+from pdf2image import convert_from_path
+import os
 
-## Cleaned: removed git conflict marker
+
 required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python', 'pdf2image']
 missing = []
 
@@ -58,7 +61,7 @@ def ocr_conversion(image_path, lang='lat'):
     # Placeholder: function not implemented
     print('ocr_conversion is not implemented. Please use the main loop for OCR processing.')
     return {}
-def process_all_images(input_dir, lang='lat'): 
+def process_all_images(input_dir, output_dir): 
     total_words = 0
     successful_images = 0
     
@@ -71,7 +74,7 @@ results_dir.mkdir(exist_ok=True)
 for img_path in input_dir.glob('*.png'):
     try:
         image = Image.open(img_path)
-        text = pytesseract.image_to_string(image, lang='lat')
+        text = pytesseract.image_to_string(image)
         print(f'Processed {img_path.name}:')
         print(text[:200])
         print('-' * 40)
@@ -86,7 +89,7 @@ for img_path in input_dir.glob('*.png'):
         print(f'Saved OCR result to {result_file}')
    
         if confidence < 65:
-            low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
+            low_conf_file = results_dir / (img_path.stem + 'low_confidence.txt')
             with open(low_conf_file, 'w', encoding='utf-8') as f:
                 f.write(text)
             print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
@@ -95,7 +98,7 @@ for img_path in input_dir.glob('*.png'):
 
 import openai 
 from openai import OpenAI 
-openai.api_key = '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'
+openai.api_key = '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'
 def correct_text_with_openai(text): 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -107,8 +110,9 @@ def correct_text_with_openai(text):
     return response['choices'][0]['message']['content']
 
 
-with open('low_conf_file.txt', 'r', encoding='utf-8') as f:
-    ocr_text = f.read()
+for low_conf_file in results_dir.glob('*_low_confidence.txt'):
+    with open(low_conf_file, 'r', encoding='utf-8') as f:
+        ocr_text = f.read()
 corrected_text = correct_text_with_openai(ocr_text)
 print(corrected_text)
 
