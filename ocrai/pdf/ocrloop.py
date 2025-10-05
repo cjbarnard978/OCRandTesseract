@@ -80,16 +80,16 @@ for img_path in input_dir.glob('*.png'):
         print('-' * 40)
 
         data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
-        confidences = [int(conf) for conf in data['conf'] if conf.isdigit() and int(conf) > 0]
+        confidences = [int(str(conf)) for conf in data['conf'] if str(conf).isdigit() and int(str(conf)) > 0]
         confidence = sum(confidences) / len(confidences) if confidences else 0
 
         result_file = results_dir / (img_path.stem + '.txt')
         with open(result_file, 'w', encoding='utf-8') as f:
             f.write(text)
         print(f'Saved OCR result to {result_file}')
-   
+
         if confidence < 65:
-            low_conf_file = results_dir / (img_path.stem + 'low_confidence.txt')
+            low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
             with open(low_conf_file, 'w', encoding='utf-8') as f:
                 f.write(text)
             print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
@@ -113,16 +113,10 @@ def correct_text_with_openai(text):
 for low_conf_file in results_dir.glob('*_low_confidence.txt'):
     with open(low_conf_file, 'r', encoding='utf-8') as f:
         ocr_text = f.read()
-corrected_text = correct_text_with_openai(ocr_text)
-print(corrected_text)
-
-corrected_text = "This is the corrected text."
-corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai_corrections')
-corrections_dir.mkdir(exist_ok=True)
-
-
-filename = 'openai_corrected.txt'
-corrected_file = corrections_dir / filename
-with open(corrected_file, 'w', encoding='utf-8') as f:
-    f.write(corrected_text)
-print(f'Corrected text saved to {corrected_file}')
+    corrected_text = correct_text_with_openai(ocr_text)
+    corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai_corrections')
+    corrections_dir.mkdir(exist_ok=True)
+    corrected_file = corrections_dir / (low_conf_file.stem + '_openai_corrected.txt')
+    with open(corrected_file, 'w', encoding='utf-8') as f:
+        f.write(corrected_text)
+    print(f'Corrected text saved to {corrected_file}')
