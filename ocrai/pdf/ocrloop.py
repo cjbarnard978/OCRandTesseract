@@ -100,28 +100,17 @@ for img_path in input_dir.glob('*.png'):
             f.write(text)
         print(f'Saved OCR result to {result_file}')
    
-                if confidence < 65:
-                    low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
-                    with open(low_conf_file, 'w', encoding='utf-8') as f:
-                        f.write(text)
-                    print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
-
-                    # Send to OpenAI for correction
-                    import openai
-                    openai.api_key = 'YOUR_OPENAI_API_KEY'  # Replace with your actual key
-                    corrected_text = correct_text_with_openai(text)
-                    corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai corrections')
-                    corrections_dir.mkdir(exist_ok=True)
-                    corrected_file = corrections_dir / (img_path.stem + '_openai_corrected.txt')
-                    with open(corrected_file, 'w', encoding='utf-8') as f:
-                        f.write(corrected_text)
-                    print(f'Corrected text saved to {corrected_file}')
+        if confidence < 65:
+            low_conf_file = results_dir / (img_path.stem + '_low_confidence.txt')
+            with open(low_conf_file, 'w', encoding='utf-8') as f:
+                f.write(text)
+            print(f'Low confidence ({confidence:.1f}%) result saved to {low_conf_file}')
     except Exception as e:
         print(f'❌ Error processing {img_path.name}: {e}')
 
 import openai 
 from openai import OpenAI 
-openai.api_key = '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' 
+openai.api_key = 'Your-OpenAI-Key-Here'
 def correct_text_with_openai(text): 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
