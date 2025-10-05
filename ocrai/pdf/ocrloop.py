@@ -44,6 +44,18 @@ quality_settings = {
 settings = quality_settings.get('high', quality_settings['high'])
 
 
+from pathlib import Path
+from PIL import Image
+
+input_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/converted_images')
+output_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/grayscale_images')
+output_dir.mkdir(exist_ok=True)
+
+for img_path in input_dir.glob('*.png'):
+    with Image.open(img_path) as img:
+        gray_img = img.convert('L')
+        gray_img.save(output_dir / img_path.name)
+        print(f'Converted {img_path.name} to grayscale.')
 
 
   
