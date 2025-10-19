@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 from pdf2image import convert_from_path
 import os
+import re
 
 
 required_packages = ['numpy', 'pandas', 'pytesseract', 'Pillow', 'opencv-python', 'pdf2image']
@@ -97,7 +98,7 @@ for img_path in input_dir.glob('*.png'):
         print(f'❌ Error processing {img_path.name}: {e}')
 
 import openai 
-openai.api_key = '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'
+openai.api_key = 'yourkeyhere'
 def correct_text_with_openai(text): 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -107,6 +108,33 @@ def correct_text_with_openai(text):
         ]
     )
     return response['choices'][0]['message']['content']
+
+
+def is_blank_text(text, min_words=1, min_chars=1, alpha_ratio=0.3):
+    """Return True if text is empty or likely blank/garbage.
+
+    - min_words: minimum number of word tokens to consider non-blank
+    - min_chars: minimum total characters
+    - alpha_ratio: fraction of characters that must be alphabetic
+    """
+    if not text:
+        return True
+    s = text.strip()
+    if not s:
+        return True
+    # Count word-like tokens
+    words = re.findall(r"\w+", s)
+    if len(words) >= min_words:
+        return False
+    # Too short overall
+    if len(s) >= min_chars:
+        # still check alpha ratio
+        alpha = sum(1 for c in s if c.isalpha())
+        if len(s) > 0 and (alpha / len(s)) >= alpha_ratio:
+            return False
+        return True
+    # fallback: treat as blank if not enough words or characters
+    return True
 
 
 for low_conf_file in results_dir.glob('*_low_confidence.txt'):
