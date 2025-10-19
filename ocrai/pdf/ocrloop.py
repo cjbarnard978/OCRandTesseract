@@ -140,6 +140,10 @@ def is_blank_text(text, min_words=1, min_chars=1, alpha_ratio=0.3):
 for low_conf_file in results_dir.glob('*_low_confidence.txt'):
     with open(low_conf_file, 'r', encoding='utf-8') as f:
         ocr_text = f.read()
+    # Skip blank or near-blank OCR outputs to avoid sending empty pages to OpenAI
+    if is_blank_text(ocr_text, min_words=5, min_chars=30, alpha_ratio=0.25):
+        print(f"Skipping {low_conf_file.name}: blank or near-blank OCR output (not sent to OpenAI)")
+        continue
     corrected_text = correct_text_with_openai(ocr_text)
     corrections_dir = Path('/Users/ceciliabarnard/Desktop/8510/ocrtesseract/ocrai/pdf/openai_corrections')
     corrections_dir.mkdir(exist_ok=True)
